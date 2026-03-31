@@ -29,6 +29,11 @@ jobs:
         with:
           node-version: '24'
 
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.12.1
+        with:
+          mongodb-version: '6.0'
+
       - name: Run Backend Unit Tests
         run: |
           npm ci
@@ -49,7 +54,7 @@ jobs:
           npm test -- --watch=false # Ensure Vitest doesn't hang in "watch" mode
         working-directory: frontend
 
-      - name: Start Stack for Testing
+      - name: Start App for Testing
         run: |
           NODE_ENV=test docker compose -f docker-compose.dev.yml up --build
           # Ensure we wait for the PROXY port 8080
