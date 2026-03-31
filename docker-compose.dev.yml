@@ -1,0 +1,53 @@
+services:
+  app:
+    image: hello-front-dev
+    build:
+      context: ./frontend # The context will pick this directory as the "build context"
+      dockerfile: dev.Dockerfile # This will simply tell which dockerfile to read
+    volumes:
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
+    container_name: hello-front-dev
+
+  mongo:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: Blogs
+    volumes:
+      - mongo_data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+      - ./atlas_dump.gz:/docker-entrypoint-initdb.d/atlas_dump.gz
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+
+  server:
+    image: hello-back-dev
+    build:
+      context: ./backend # The context will pick this directory as the "build context"
+      dockerfile: dev.Dockerfile # This will simply tell which dockerfile to read
+    depends_on:
+      - mongo
+    volumes:
+      - ./backend:/usr/src/app           # Syncs your code
+      - /usr/src/app/node_modules
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      MONGODB_URI: ${MONGODB_URI}
+      MONGODB_URL: ${MONGODB_URL}
+      SECRET: ${SECRET}
+    container_name: hello-back-dev
+
+  nginx:
+    image: nginx:1.27-alpine
+    volumes:
+      - ./nginx.dev.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - 8080:80
+    container_name: reverse-proxy
+    depends_on:
+      - app
+      - server
+
+volumes:
+  mongo_data:

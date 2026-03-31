@@ -1,0 +1,35 @@
+services:
+  app:
+    image: hello-front-prod
+    build:
+      context: ./frontend # The context will pick this directory as the "build context"
+      dockerfile: Dockerfile # This will simply tell which dockerfile to read
+    volumes:
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
+    container_name: hello-front-prod
+
+  backend:
+    image: hello-back-prod
+    build:
+      context: ./backend # The context will pick this directory as the "build context"
+      dockerfile: Dockerfile # This will simply tell which dockerfile to read
+    volumes:
+      - ./backend:/usr/src/app           # Syncs your code
+      - /usr/src/app/node_modules
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      MONGODB_ATLAS: ${MONGODB_ATLAS}
+      SECRET: ${SECRET}
+    container_name: hello-back-prod
+
+  nginx:
+    image: nginx:1.27-alpine
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - 8080:80
+    container_name: reverse-proxy
+    depends_on:
+      - app
+      - backend

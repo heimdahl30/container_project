@@ -1,0 +1,21 @@
+{
+  "name": "playwright_blogtesting",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_ENV=test playwright test",
+    "test:report": "playwright show-report",
+    "test:chromium": "playwright test --project=chromium",
+    "lint": "eslint ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "1.49.0",
+    "@types/node": "^24.1.0",
+    "eslint": "^8.57.1",
+    "eslint-plugin-playwright": "^0.16.0"
+  }
+}
