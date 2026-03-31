@@ -56,14 +56,21 @@ jobs:
 
       - name: Start App for Testing
         run: |
-          NODE_ENV=test docker compose -f docker-compose.dev.yml up --build
-          # Ensure we wait for the PROXY port 8080
-          npx wait-on http://localhost:8080 --timeout 60000
+          NODE_ENV=test docker compose -f docker-compose.dev.yml up -d --build
         env:
           MONGODB_URL: ${{ secrets.MONGODB_URL }}
           MONGO_ROOT_USER: ${{ secrets.MONGO_ROOT_USER }}
           MONGO_ROOT_PASSWORD: ${{ secrets.MONGO_ROOT_PASSWORD }}
           SECRET: ${{secrets.SECRET}}
+
+      - name: Wait for services to be ready
+        run: |
+          echo "Waiting for nginx to be ready on port 8080..."
+          timeout 120 bash -c 'until curl -f http://localhost:8080 > /dev/null 2>&1; do sleep 2; done'
+          echo "Services are ready!"
+
+      - name: Check running containers
+        run: docker ps
 
       - name: Install Playwright dependencies
         run: |
