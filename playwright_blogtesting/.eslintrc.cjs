@@ -7,7 +7,11 @@ module.exports = {
     'linebreak-style': 'off',
   },
   env: {
+    browser: true,
     node: true,
     es2021: true
+  },
+  parserOptions: {
+    sourceType: 'module',
   },
 }
