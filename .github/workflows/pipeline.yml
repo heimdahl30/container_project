@@ -6,6 +6,7 @@ on:
     paths:
       - 'frontend/**'
       - 'backend/**'
+      - 'playwright_blogtesting/**'
       - '.github/workflows/**'
   pull_request:
     branches: [main]
@@ -13,6 +14,7 @@ on:
     paths:
       - 'frontend/**'
       - 'backend/**'
+      - 'playwright_blogtesting/**'
       - '.github/workflows/**'
 
 jobs:
